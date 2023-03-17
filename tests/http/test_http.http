@@ -1,0 +1,77 @@
+POST {{host}}/challenger/decoder
+Content-Type: application/json
+
+{
+  "possible_values": ["a", "b", "c", "d", "e", "f"],
+  "num_slots": 4,
+  "history":
+  [
+    {
+      "output_received": ["a", "b", "c", "d"],
+      "result": 22
+    }
+  ]
+}
+
+###
+
+POST {{host}}/decoder/evaluate
+Content-Type: application/json
+
+{
+  "runId": "523",
+  "teamUrl": "{{host}}/challenger",
+  "callbackUrl": ""
+}
+
+###
+
+POST {{host}}/asteroid/evaluate
+Content-Type: application/json
+
+{
+  "runId": "523",
+  "teamUrl": "{{host}}/challenger",
+  "callbackUrl": ""
+}
+
+
+###
+# gets all the http records
+POST {{host}}/allrecords
+Content-Type: application/json
+
+{
+  "password": {{password}}
+}
+
+
+###
+# gets all the http records
+POST {{host}}/latestrecords
+Content-Type: application/json
+
+{
+  "password": {{password}}
+}
+
+
+
+###
+# counts records
+POST {{host}}/countrecords
+Content-Type: application/json
+
+{
+  "password": {{password}}
+}
+
+###
+# deletes records
+POST {{host}}/deleterecords
+Content-Type: application/json
+
+{
+  "password": {{password}}
+}
+

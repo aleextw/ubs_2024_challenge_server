@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run App" type="Python.FlaskServer">
+    <module name="python-template" />
+    <option name="target" value="C:\Users\Cheryl\IdeaProjects\space-odyssey\app.py" />
+    <option name="targetType" value="PATH" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <option name="SDK_HOME" value="C:\Users\Cheryl\IdeaProjects\developer-templates\venv\Scripts\python.exe" />
+    <option name="SDK_NAME" value="Python 3.9 (developer-templates)" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+    <option name="launchJavascriptDebuger" value="false" />
+    <method v="2" />
+  </configuration>
+</component>
