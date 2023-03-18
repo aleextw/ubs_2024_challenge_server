@@ -24,10 +24,11 @@ Run App Locally
 - in tests/http run test_http.http to hit localhost endpoints
 
 Add Gitlab Variables
-- HEROKU_API_KEY_DEV
-- HEROKU_API_KEY_PROD
-- HEROKU_APP_DEV
-- HEROKU_APP_PROD
+- In Gitlab project you are wroking on > Settings > CI/CD > Variables 
+- add HEROKU_API_KEY_DEV
+- add HEROKU_API_KEY_PROD
+- add HEROKU_APP_DEV
+- add HEROKU_APP_PROD
 
 # Challenges
 
