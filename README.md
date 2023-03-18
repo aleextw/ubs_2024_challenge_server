@@ -25,10 +25,10 @@ Run App Locally
 
 Add Gitlab Variables
 - In Gitlab project you are wroking on > Settings > CI/CD > Variables 
-- add HEROKU_API_KEY_DEV
-- add HEROKU_API_KEY_PROD
-- add HEROKU_APP_DEV
-- add HEROKU_APP_PROD
+- add `HEROKU_API_KEY_DEV`
+- add `HEROKU_API_KEY_PROD`
+- add `HEROKU_APP_DEV`
+- add `HEROKU_APP_PROD`
 
 # Challenges
 
