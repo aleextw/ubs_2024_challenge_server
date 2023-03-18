@@ -9,19 +9,25 @@ To set up on intellij:
 - pip install -r .\requirements.txt
 - go to Project Structure > SDKs > + > Add Python SDK (this will create the venv folder)
 
-Run Tests
+Run Tests Locally
 - 'Edit Configurations...'
 - `Run All Tests.run.xml`
 - option.SDK_HOME.value
 - option.WORKING_DIRECTORY.value
 
-Run App
+Run App Locally
 - Update `Run App.run.xml`
 - option.target.value
 - option.SDK_HOME.value
 - option.WORKING_DIRECTORY.value 
 - should be able to see page running at http://localhost:5000/decoder 
 - in tests/http run test_http.http to hit localhost endpoints
+
+Add Gitlab Variables
+- HEROKU_API_KEY_DEV
+- HEROKU_API_KEY_PROD
+- HEROKU_APP_DEV
+- HEROKU_APP_PROD
 
 # Challenges
 
