@@ -126,6 +126,11 @@ def return_all_records():
         return jsonify(response), 401
 
 
+@app.get("/healthcheck")
+def healthcheck_endpoint():
+    return jsonify({}), 200
+
+
 @app.post(constants.LAB_WORK_EVALUATE)
 def lab_work_evaluate():
     json_request = request.json
