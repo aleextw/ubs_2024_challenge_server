@@ -1,10 +1,7 @@
 from app import app
-from utils.constants import ASTEROID_ROOT, DECODER_ROOT
+from utils.constants import LAB_WORK_ROOT
 
 
 def test_routing():
-    response = app.test_client().get(ASTEROID_ROOT)
-    assert response.status_code == 200
-
-    response = app.test_client().get(DECODER_ROOT)
+    response = app.test_client().get(LAB_WORK_ROOT)
     assert response.status_code == 200

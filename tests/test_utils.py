@@ -1,56 +1,204 @@
-from utils.utils import verify_answers
+from utils.utils import calculate_score
 
 
-def test_answer_verification_all_correct():
-    answersExpected = {
-        "ABC": {"origin": 20, "score": 20},
-        "ABCD": {"origin": 30, "score": 40}
-    }
-    answersReceived = [
-        {"input": "ABC", "origin": 20, "score": 20},
-        {"input": "ABCD", "origin": 30, "score": 40}
+def test_calculate_score_empty_submission():
+    team_submission = [{}]
+    answer = [
+        {
+            "1000": [1, 2, 3, 4, 5],
+            "2000": [2, 3, 4, 5, 6],
+            "3000": [3, 4, 5, 6, 7],
+            "4000": [4, 5, 6, 7, 8],
+            "5000": [5, 6, 7, 8, 9],
+            "6000": [6, 7, 8, 9, 10],
+            "7000": [7, 8, 9, 10, 11],
+            "8000": [8, 9, 10, 11, 12],
+            "9000": [9, 10, 11, 12, 13],
+            "10000": [10, 11, 12, 13, 14, 15],
+        }
     ]
-    errorMessage, score = verify_answers(answersReceived, answersExpected, 100)
-    assert '' == errorMessage
-    assert 100 == score
+
+    expected = 0
+
+    actual = calculate_score(team_submission, answer, 100)
+    assert actual[1] == expected
 
 
-def test_answer_verification_missing_answers():
-    answersExpected = {
-        "ABC": {"origin": 20, "score": 20},
-        "ABCD": {"origin": 30, "score": 40}
-    }
-    answersReceived = [
-        {"input": "ABC", "origin": 20, "score": 20}
+def test_calculate_score_partial_submission_all_correct():
+    team_submission = [
+        {
+            "1000": [1, 2, 3, 4, 5],
+            "2000": [2, 3, 4, 5, 6],
+            "3000": [3, 4, 5, 6, 7],
+            "4000": [4, 5, 6, 7, 8],
+        }
     ]
-    errorMessage, score = verify_answers(answersReceived, answersExpected, 100)
-    assert 0 == 0
-    assert 'missing testcase from response' == errorMessage
-
-
-def test_answer_verification_missing_answers_key():
-    answersExpected = {
-        "ABC": {"origin": 20, "score": 20},
-        "ABCD": {"origin": 30, "score": 40}
-    }
-    answersReceived = [
-        {"input": "ABC", "origin": 20, "score": 20},
-        {"input": "ABCDE", "origin": 30, "score": 40}
+    answer = [
+        {
+            "1000": [1, 2, 3, 4, 5],
+            "2000": [2, 3, 4, 5, 6],
+            "3000": [3, 4, 5, 6, 7],
+            "4000": [4, 5, 6, 7, 8],
+            "5000": [5, 6, 7, 8, 9],
+            "6000": [6, 7, 8, 9, 10],
+            "7000": [7, 8, 9, 10, 11],
+            "8000": [8, 9, 10, 11, 12],
+            "9000": [9, 10, 11, 12, 13],
+            "10000": [10, 11, 12, 13, 14, 15],
+        }
     ]
-    errorMessage, score = verify_answers(answersReceived, answersExpected, 100)
-    assert 50 == score
-    assert '' == errorMessage
+
+    expected = 40
+
+    actual = calculate_score(team_submission, answer, 100)
+    assert actual[1] == expected
 
 
-def test_answer_verification_half_correct():
-    answersExpected = {
-        "ABC": {"origin": 20, "score": 20},
-        "ABCD": {"origin": 30, "score": 40}
-    }
-    answersReceived = [
-        {"input": "ABC", "origin": 20, "score": 20},
-        {"input": "ABCD", "origin": 40, "score": 40}
+def test_calculate_score_partial_submission_partial_correct():
+    team_submission = [
+        {
+            "1000": [1, 2, 5, 4, 5],
+            "2000": [2, 3, 4, 5, 6],
+            "3000": [1, 4, 5, 6, 7],
+            "4000": [4, 5, 6, 7, 10],
+        }
     ]
-    errorMessage, score = verify_answers(answersReceived, answersExpected, 100)
-    assert 50 == score
-    assert '' == errorMessage
+    answer = [
+        {
+            "1000": [1, 2, 3, 4, 5],
+            "2000": [2, 3, 4, 5, 6],
+            "3000": [3, 4, 5, 6, 7],
+            "4000": [4, 5, 6, 7, 8],
+            "5000": [5, 6, 7, 8, 9],
+            "6000": [6, 7, 8, 9, 10],
+            "7000": [7, 8, 9, 10, 11],
+            "8000": [8, 9, 10, 11, 12],
+            "9000": [9, 10, 11, 12, 13],
+            "10000": [10, 11, 12, 13, 14, 15],
+        }
+    ]
+
+    expected = 10
+
+    actual = calculate_score(team_submission, answer, 100)
+    assert actual[1] == expected
+
+
+def test_calculate_score_full_submission_all_correct():
+    team_submission = [
+        {
+            "1000": [1, 2, 3, 4, 5],
+            "2000": [2, 3, 4, 5, 6],
+            "3000": [3, 4, 5, 6, 7],
+            "4000": [4, 5, 6, 7, 8],
+            "5000": [5, 6, 7, 8, 9],
+            "6000": [6, 7, 8, 9, 10],
+            "7000": [7, 8, 9, 10, 11],
+            "8000": [8, 9, 10, 11, 12],
+            "9000": [9, 10, 11, 12, 13],
+            "10000": [10, 11, 12, 13, 14, 15],
+        }
+    ]
+    answer = [
+        {
+            "1000": [1, 2, 3, 4, 5],
+            "2000": [2, 3, 4, 5, 6],
+            "3000": [3, 4, 5, 6, 7],
+            "4000": [4, 5, 6, 7, 8],
+            "5000": [5, 6, 7, 8, 9],
+            "6000": [6, 7, 8, 9, 10],
+            "7000": [7, 8, 9, 10, 11],
+            "8000": [8, 9, 10, 11, 12],
+            "9000": [9, 10, 11, 12, 13],
+            "10000": [10, 11, 12, 13, 14, 15],
+        }
+    ]
+
+    expected = 100
+
+    actual = calculate_score(team_submission, answer, 100)
+    assert actual[1] == expected
+
+
+def test_calculate_score_full_submission_partial_correct():
+    team_submission = [
+        {
+            "1000": [1, 2, 3, 4, 6],
+            "2000": [2, 3, 4, 5, 7],
+            "3000": [3, 4, 5, 6, 8],
+            "4000": [4, 5, 6, 7, 9],
+            "5000": [5, 6, 7, 8, 10],
+            "6000": [6, 7, 8, 9, 11],
+            "7000": [7, 8, 9, 10, 11],
+            "8000": [8, 9, 10, 11, 12],
+            "9000": [9, 10, 11, 12, 13],
+            "10000": [10, 11, 12, 13, 14, 15],
+        }
+    ]
+    answer = [
+        {
+            "1000": [1, 2, 3, 4, 5],
+            "2000": [2, 3, 4, 5, 6],
+            "3000": [3, 4, 5, 6, 7],
+            "4000": [4, 5, 6, 7, 8],
+            "5000": [5, 6, 7, 8, 9],
+            "6000": [6, 7, 8, 9, 10],
+            "7000": [7, 8, 9, 10, 11],
+            "8000": [8, 9, 10, 11, 12],
+            "9000": [9, 10, 11, 12, 13],
+            "10000": [10, 11, 12, 13, 14, 15],
+        }
+    ]
+
+    expected = 40
+
+    actual = calculate_score(team_submission, answer, 100)
+    assert actual[1] == expected
+
+
+def test_calculate_score_full_submission_full_correct_truncate_length():
+    team_submission = [
+        {
+            "1000": [1, 2, 3, 4, 6],
+            "2000": [2, 3, 4, 5, 7],
+            "3000": [3, 4, 5, 6, 8],
+            "4000": [4, 5, 6, 7, 9],
+            "5000": [5, 6, 7, 8, 10],
+            "6000": [6, 7, 8, 9, 11],
+            "7000": [7, 8, 9, 10, 11],
+            "8000": [8, 9, 10, 11, 12],
+            "9000": [9, 10, 11, 12, 13],
+            "10000": [10, 11, 12, 13, 14, 15],
+        },
+        {
+            "1000": [1, 2, 3, 4, 6],
+            "2000": [2, 3, 4, 5, 7],
+            "3000": [3, 4, 5, 6, 8],
+            "4000": [4, 5, 6, 7, 9],
+            "5000": [5, 6, 7, 8, 10],
+            "6000": [6, 7, 8, 9, 11],
+            "7000": [7, 8, 9, 10, 11],
+            "8000": [8, 9, 10, 11, 12],
+            "9000": [9, 10, 11, 12, 13],
+            "10000": [10, 11, 12, 13, 14, 15],
+        },
+    ]
+    answer = [
+        {
+            "1000": [1, 2, 3, 4, 5],
+            "2000": [2, 3, 4, 5, 6],
+            "3000": [3, 4, 5, 6, 7],
+            "4000": [4, 5, 6, 7, 8],
+            "5000": [5, 6, 7, 8, 9],
+            "6000": [6, 7, 8, 9, 10],
+            "7000": [7, 8, 9, 10, 11],
+            "8000": [8, 9, 10, 11, 12],
+            "9000": [9, 10, 11, 12, 13],
+            "10000": [10, 11, 12, 13, 14, 15],
+        }
+    ]
+
+    expected = 40
+
+    actual = calculate_score(team_submission, answer, 100)
+    assert actual[1] == expected
