@@ -9,7 +9,7 @@ app = Flask(__name__)
 try:
     if os.environ["MODE"] == "DEV" or os.environ["MODE"] == "PROD":
         print("starting up with environment:", os.environ["MODE"])
-        SQLALCHEMY_DATABASE_URI = os.environ["DATABASE_URL"].replace("://", "ql://", 1)
+        SQLALCHEMY_DATABASE_URI = os.environ["DATABASE_URL"]
         app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 
 except KeyError:
