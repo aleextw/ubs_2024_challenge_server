@@ -35,3 +35,5 @@ Add Gitlab Variables
 [Asteroid](static/asteroid.md)
 
 [Decoder](static/decoder.md)
+
+[Lab Work](static/)

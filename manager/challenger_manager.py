@@ -1,13 +1,11 @@
 from sqlite3 import DatabaseError
 
-from app import db
+from utils.db import db
 from models.challenger_answer import ChallengerAnswer
 
 
 def create_answer(answer):
-    return ChallengerAnswer(
-        answer=answer
-    )
+    return ChallengerAnswer(answer=answer)
 
 
 def add_answer(answer):
@@ -20,7 +18,10 @@ def add_answer(answer):
 
 def get_latest_answer_stored():
     try:
-        return db.session.query(ChallengerAnswer).order_by(
-            ChallengerAnswer.answerId.desc()).first()
+        return (
+            db.session.query(ChallengerAnswer)
+            .order_by(ChallengerAnswer.answerId.desc())
+            .first()
+        )
     except DatabaseError:
         print("No table found")

@@ -1,20 +1,24 @@
-import json
 import logging
 import os
 
+import requests
+from passlib.context import CryptContext
+from utils import constants
+from utils.constants import (
+    REQUEST_TIMEOUT,
+)
+from itertools import zip_longest
+
 
 def get_logger():
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
     return logging.getLogger()
 
 
 logger = get_logger()
 
-import requests
-from passlib.context import CryptContext
-from utils import constants
-from utils.constants import REQUEST_TIMEOUT, TO_GUESS, POSSIBLE_VALUES, NUM_SLOTS, HISTORY, DECODER_ROOT
 
 MODE = None
 
@@ -42,30 +46,17 @@ def call_team_url_verify_answer(team_url, question_endpoint, parameters):
     url_to_call = team_url + question_endpoint
     error_message = ""
     try:
-        if question_endpoint == DECODER_ROOT:
-            to_guess = parameters[TO_GUESS]
-            possible_values = parameters[POSSIBLE_VALUES]
-            from processing_logic.decoder import format_attempt_history, verify_decoder_answer
-            history = format_attempt_history(parameters[HISTORY])
-            active_session = parameters["active_session"]
+        test_cases = parameters["test_cases"]
+        answers = parameters["answers"]
+        max_points = parameters["max_points"]
+        response = requests.post(url_to_call, json=test_cases, timeout=REQUEST_TIMEOUT)
+        response.raise_for_status()
+        output_received = response.json()
+        error_message, points_scored = calculate_score(
+            output_received, answers, max_points
+        )
 
-            decoder_parameters = {POSSIBLE_VALUES: possible_values, NUM_SLOTS: len(to_guess), HISTORY: history}
-            response = requests.post(url_to_call, json=decoder_parameters, timeout=REQUEST_TIMEOUT)
-            response.raise_for_status()
-            output_received = response.json()
-            error_message, points_scored = verify_decoder_answer(to_guess, output_received["answer"], len(history),
-                                                                 team_url, active_session)
-            return output_received, points_scored, error_message
-
-        else:
-            test_cases = parameters["test_cases"]
-            answers = parameters["answers"]
-            max_points = parameters["max_points"]
-            response = requests.post(url_to_call, json=test_cases, timeout=REQUEST_TIMEOUT)
-            response.raise_for_status()
-            output_received = response.json()
-            error_message, points_scored = verify_answers(output_received, answers, max_points)
-            return output_received, points_scored, error_message
+        return output_received, points_scored, error_message
 
     except requests.exceptions.Timeout:
         error_message = "request timed out"
@@ -73,7 +64,9 @@ def call_team_url_verify_answer(team_url, question_endpoint, parameters):
         error_message = "invalid teamUrl"
     except Exception as error:
         error_message = "team server failed to process with an error of " + str(error)
-        logger.info("team server " + url_to_call + " has a request code of " + str(error))
+        logger.info(
+            "team server " + url_to_call + " has a request code of " + str(error)
+        )
 
     return output_received, 0, error_message
 
@@ -84,14 +77,19 @@ def call_coordinator_url_post_score(callbackUrl, runId, scoreObtained, message):
         headers, payload = format_response_to_coordinator(runId, scoreObtained, message)
         if callbackUrl != "":
             if len(headers) > 0:
-                r = requests.post(callbackUrl, json=payload,
-                                  headers=headers, timeout=10)
+                r = requests.post(
+                    callbackUrl, json=payload, headers=headers, timeout=10
+                )
             else:
                 r = requests.post(callbackUrl, json=payload, timeout=10)
-            logger.info("request posted to coordinator with status code: " + str(r.status_code))
+            logger.info(
+                "request posted to coordinator with status code: " + str(r.status_code)
+            )
 
             if r.status_code != 200:
-                error_message = "status code: " + str(r.status_code) + ", response: " + str(r.text)
+                error_message = (
+                    "status code: " + str(r.status_code) + ", response: " + str(r.text)
+                )
 
     except requests.exceptions.Timeout:
         logger.info("request to coordinator timed out")
@@ -103,66 +101,70 @@ def call_coordinator_url_post_score(callbackUrl, runId, scoreObtained, message):
         return error_message
 
 
-def verify_answers(output_received, output_expected, max_points):
-    points_scored = 0
-    error_message = ""
-    try:
-        score_per_test_case = max_points / len(output_expected)
-        if len(output_received) != len(output_expected):
-            error_message = "missing testcase from response"
-        else:
-            for answer in output_received:
-                test_case = answer["input"]
+def calculate_score(actual: dict, expected: dict, max_points: int) -> int:
+    """
+    If a line is wrong, skips it and proceeds to the next line (if exists)
 
-                if test_case in output_expected:
-                    if answer["origin"] == output_expected[test_case]["origin"] and answer["score"] == \
-                            output_expected[test_case]["score"]:
-                        points_scored += score_per_test_case
+    If team submission is only partial, will return partial score
+    """
+    score = 0
+    error_message = ""
+    increment = max_points // (len(expected) * 10)
+
+    try:
+        if len(actual) > len(expected):
+            error_message += "Response longer than anticipated,"
+            actual = actual[: len(expected)]
+
+        for team_answer, expected_answer in zip_longest(actual, expected):
+            if team_answer is None:
+                error_message += "Missing testcase(s) from response,"
+                break
+
+            for k, v in expected_answer.items():
+                if (comp := team_answer.get(k, None)) is None:
+                    error_message += "Partial submission(s) for testcase(s),"
+                    break
+
+                for a, b in zip_longest(v, comp):
+                    if b is None or a != b:
+                        break
                 else:
-                    continue
-    except KeyError as e:
-        error_message = "missing "+str(e)+" key from response"
+                    score += increment
     except Exception as e:
         print(e)
-        error_message = "missing answers from response"
-    return error_message, int(points_scored)
+        error_message = "Missing answers from response,"
+
+    return error_message, score
 
 
 def format_response_to_coordinator(runId, scoreObtained, message):
     try:
-        access_token = os.environ['AUTH_TOKEN']
+        access_token = os.environ["AUTH_TOKEN"]
 
         headers = {"Authorization": access_token}
 
-        payload = {"runId": runId,
-                   "score": str(int(scoreObtained)),
-                   "message": message}
+        payload = {"runId": runId, "score": str(int(scoreObtained)), "message": message}
 
-
-    except KeyError as e:
+    except KeyError:
         headers = {}
-        payload = {"runId": runId,
-                   "score": str(int(scoreObtained)),
-                   "message": message
-                   }
+        payload = {"runId": runId, "score": str(int(scoreObtained)), "message": message}
 
     return headers, payload
-
-
-def convert_string_to_list(convert_string):
-    return json.loads(convert_string)
 
 
 def verify_hash(plaintext):
     myctx = CryptContext(schemes=["sha256_crypt", "md5_crypt"])
     myctx.default_scheme()
-    password_hash = '$5$rounds=535000$D4XUeAh/sysM87zq$sKqtnCqEML5OQb3PyR4jeQ/SmzsOCd0Ua9fF.khYJP6'
+    password_hash = (
+        "$5$rounds=535000$8q2XTj3WzvqmyVCp$mQMt42CrEZ4jfbKr1Fr9wiSJ/XZuoyvsZpBD6JY93i/"
+    )
     try:
-        if os.environ['MODE'] == "DEV" or os.environ['MODE'] == "PROD":
-            password_hash = '$5$rounds=535000$6XJaEAIDqBAn.Q0e$q0VO79bWtkzG9rl7AkOi0mQvosm39leY7wP7erBrG95'
+        if os.environ["MODE"] == "DEV" or os.environ["MODE"] == "PROD":
+            password_hash = "$5$rounds=535000$9pOjWdILslH.ciiD$/nDLz.OOKJMuosBx8TSJR3qNCDIlKnyl0X3KsVSz6v."
 
-    except KeyError as e:
-        password_hash = '$5$rounds=535000$D4XUeAh/sysM87zq$sKqtnCqEML5OQb3PyR4jeQ/SmzsOCd0Ua9fF.khYJP6'
+    except KeyError:
+        password_hash = "$5$rounds=535000$8q2XTj3WzvqmyVCp$mQMt42CrEZ4jfbKr1Fr9wiSJ/XZuoyvsZpBD6JY93i/"
     return myctx.verify(plaintext, password_hash)
 
 
