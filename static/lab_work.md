@@ -19,7 +19,7 @@ Expose a `POST` endpoint `/lab-work` for us to verify!
 
 ### Input
 
-Your input is sent as an 'old-fashioned' table for you to parse.
+Your input is sent as a list of 'old-fashioned' (markdown) tables for you to parse, where each table constitutes one test case.
 1. The `Lab` column indicates which lab the data corresponds to.
 2. The `Cell counts` column indicates the starting cell counts of the petri dishes belonging to that lab.
    - Constraints: `0 < cell count < 10000`
@@ -32,22 +32,29 @@ Your input is sent as an 'old-fashioned' table for you to parse.
 
 #### Example Input
 
+(The test case has been split into multiple lines for clarity)
+
 ```
-|Lab | Cell counts             | Increment     | Condition |
-|----|-------------------------|---------------|-----------|
-|0   | 98 89 52                | count * 2     | 5  6 1    |
-|1   | 57 95 80 92 57 78       | count * 13    | 2  2 6    |
-|2   | 82 74 97 75 51 92 83    | count + 5     | 19 7 5    |
-|3   | 97 88 51 68 68 76       | count + 6     | 7  0 4    |
-|4   | 63                      | count + 1     | 17 0 1    |
-|5   | 94 91 51 63             | count + 4     | 13 4 3    |
-|6   | 61 54 94 71 74 68 98 83 | count + 2     | 3  2 7    |
-|7   | 90 56                   | count * count | 11 3 5    |
+[
+   """
+   |Lab | Cell counts             | Increment     | Condition |
+   |----|-------------------------|---------------|-----------|
+   |0   | 98 89 52                | count * 2     | 5  6 1    |
+   |1   | 57 95 80 92 57 78       | count * 13    | 2  2 6    |
+   |2   | 82 74 97 75 51 92 83    | count + 5     | 19 7 5    |
+   |3   | 97 88 51 68 68 76       | count + 6     | 7  0 4    |
+   |4   | 63                      | count + 1     | 17 0 1    |
+   |5   | 94 91 51 63             | count + 4     | 13 4 3    |
+   |6   | 61 54 94 71 74 68 98 83 | count + 2     | 3  2 7    |
+   |7   | 90 56                   | count * count | 11 3 5    |
+   """,
+   ...
+]
 ```
 
 ### Output
 
-Your output should consist of a JSON object, with keys corresponding to the day which the record was logged, and an array of the number of petri-dishes analysed by each lab, in the order of the lab numbers.
+Your output should consist of a list of JSON objects (each corresponding to a test case), with keys corresponding to the day which the record was logged, and an array of the number of petri-dishes analysed by each lab, in the order of the lab numbers.
 
 #### Example Output
 
