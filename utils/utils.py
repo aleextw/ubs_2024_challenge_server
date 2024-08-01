@@ -101,7 +101,7 @@ def call_coordinator_url_post_score(callbackUrl, runId, scoreObtained, message):
         return error_message
 
 
-def calculate_score(actual: dict, expected: dict, max_points: int) -> int:
+def calculate_score(actual: list, expected: list, max_points: int) -> int:
     """
     If a line is wrong, skips it and proceeds to the next line (if exists)
 

@@ -114,7 +114,6 @@ def generate_test_cases(num_test_cases):
 
 
 def format_test_cases(test_cases):
-    results = {}
     formatted_tests = []
     answers = []
 
@@ -122,11 +121,10 @@ def format_test_cases(test_cases):
         formatted_tests.append(obj_to_md_table(test_case["test_case"]))
         answers.append(test_case["answer"])
 
-    results["test_cases"] = formatted_tests
     if get_mode() in ("DEV", "LOCAL"):
         add_answer(answers)
 
-    return answers, results
+    return answers, formatted_tests
 
 
 def obj_to_md_table(test_case):
