@@ -10,3 +10,5 @@ elppacawarriors.db
 elppacawarriors.db-journal
 
 tests/http/http-client.private.env.json
+
+.env
