@@ -1,5 +1,4 @@
-LAB_WORK_ROOT = "/"
-LAB_WORK_FILENAME = "/lab_work"
+LAB_WORK_ROOT = "/lab_work"
 EVALUATE = "/evaluate"
 CHALLENGER = "/challenger"
 COORDINATOR = "/coordinator"
