@@ -1,8 +1,12 @@
 import os
 
 from utils.db import db
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, send_file
 from sqlalchemy.orm import declarative_base
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -67,6 +71,11 @@ app.register_blueprint(coordinator_blueprint)
 
 @app.route("/favicon.ico")
 def favicon():
+    # return send_file(
+    #     "https://raw.githubusercontent.com/aleextw/ubs-cc-2024-lab-work-readme/main/favicon.ico",
+    #     mimetype="image/vnd.microsoft.icon",
+    # )
+
     return send_from_directory(
         os.path.join(app.root_path, "static"),
         "favicon.ico",

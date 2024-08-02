@@ -1,0 +1,9 @@
+version: "2"
+authtoken: your-auth-token-here
+web_addr: 0.0.0.0:4040
+
+tunnels:
+  flask-server:
+    proto: http
+    addr: flask:8000
+    domain: cute-werewolf-glorious.ngrok-free.app

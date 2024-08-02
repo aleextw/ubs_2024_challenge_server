@@ -12,3 +12,5 @@ elppacawarriors.db-journal
 tests/http/http-client.private.env.json
 
 .env
+ngrok.yml
+*.db
